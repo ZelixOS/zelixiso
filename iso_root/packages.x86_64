@@ -130,6 +130,7 @@ zsh
 
 ### ZelixOS ###
 # Main Programs
+firefox
 qt5-svg
 qt5-xmlpatterns
 polkit-qt5
