@@ -96,3 +96,18 @@ Calamares yapılandırmaları ve eski Calamares'e özel `zelix-postinstall` beti
 bu kaynak yapısında bulunmaz. Önceki çalışma alanındaki yerel yedekler GitHub'a yüklenmez.
 
 Çoklu DE, greeter kesişimi ve görsel dosya adları için [masaüstü rehberine](DESKTOPS.md) bakın.
+
+## Kurucu paketini GitHub üzerinde yayınlama
+
+Büyük kurucu arşivini yerel bağlantıdan yüklemek yerine `zelix-repo` deposundaki
+manuel `Publish Zelixins` GitHub Actions işi kullanılabilir:
+
+```bash
+gh workflow run publish-zelixins.yml --repo ZelixOS/zelix-repo --ref main
+```
+
+İş, kaynak commit'ini sabitler; Arch Linux ortamında normal kullanıcıyla paketler,
+paket içeriğini doğrular ve önce arşivi yükler. İndeksteki bütün paketlerin GitHub
+checksum'ları eşleştikten sonra indeksleri yayınlar ve güncel metadata'yı commit eder.
+Yerel derleme ile CI arşivinin build metadata/checksum'ları farklı olabilir;
+yayınlanan indeks her zaman CI'nin yayınladığı arşivi referans alır.
