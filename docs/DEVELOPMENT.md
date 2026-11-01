@@ -94,3 +94,5 @@ Releases bölümünden dağıtılır. Bu kaynak yüklemesi yeni bir ISO üretmez
 
 Calamares yapılandırmaları ve eski Calamares'e özel `zelix-postinstall` betikleri
 bu kaynak yapısında bulunmaz. Önceki çalışma alanındaki yerel yedekler GitHub'a yüklenmez.
+
+Çoklu DE, greeter kesişimi ve görsel dosya adları için [masaüstü rehberine](DESKTOPS.md) bakın.

@@ -25,7 +25,7 @@ internet connection, and enough free disk space for the live filesystem and ISO.
 The build needs root privileges; package creation runs as the user invoking sudo.
 
 ```bash
-sudo pacman -S --needed archiso base-devel git python python-pyqt6 qt6-svg \
+sudo pacman -S --needed archiso base-devel git python python-pyqt6 qt6-svg qt6-imageformats \
   archinstall arch-install-scripts polkit util-linux
 ```
 
@@ -69,6 +69,15 @@ home directory is required. The installed/live system uses the public stable URL
 Modify applications in their respective repositories and commit their changes
 there before advancing the submodule pointers here. `sync-sources.py` refreshes
 derived packaging copies; it does not commit or push them.
+
+## Installer desktop choices
+
+Zelixins supports installing several desktop sessions together. The dedicated selection
+page shows descriptions, optional screenshots, and only login managers common to the
+chosen desktops. KDE retains its existing automatic Aurora wallpaper; other desktops
+accept optional wallpapers in their own source folders.
+
+See the [desktop and artwork guide](docs/DESKTOPS.md) for filenames and appearance settings.
 
 ## Validate
 

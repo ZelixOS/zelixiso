@@ -58,8 +58,9 @@ def main():
                 else:
                     single(f'{app}/{path}', f'zelixins/zelixdeps/usr/share/{app}/{path}')
     # Copy helper/script/UI + the now-refreshed payload into the packaging repository.
-    for path in ('myself.py', 'installer_support.py', 'zelix_post_install.sh', 'zelix-installer.desktop',
-                 'icons', 'zelixdeps'):
+    for path in ('myself.py', 'installer_support.py', 'desktop_catalog.py', 'desktop_page.py',
+                 'desktop_setup.py', 'desktop_theme.py', 'zelix_post_install.sh', 'zelix-installer.desktop',
+                 'icons', 'previews', 'backgrounds', 'zelixdeps'):
         if (ROOT/'zelixins'/path).is_dir():
             # Resolve this tree after the first synchronization pass below.
             continue
@@ -76,7 +77,7 @@ def main():
         return changed
     drift = apply(pairs)
     pairs = []
-    for path in ('icons', 'zelixdeps'):
+    for path in ('icons', 'previews', 'backgrounds', 'zelixdeps'):
         tree('zelixins/' + path, 'zelix-repo/zelixins/' + path)
     drift += apply(pairs)
     for name in drift:

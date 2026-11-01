@@ -13,6 +13,7 @@ from unittest.mock import MagicMock, patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'zelixins'))
 import installer_support as policy
+from desktop_catalog import desktops_for, compatible_greeters
 import myself as installer
 
 
@@ -20,8 +21,8 @@ class PolicyTests(unittest.TestCase):
     def test_desktop_and_explicit_greeters(self):
         for desktop, default in policy.GREETERS.items():
             self.assertEqual(policy.selected_greeter(desktop, 'default'), default)
-            for override in policy.GREETER_SERVICES:
-                self.assertEqual(policy.selected_greeter(desktop, override), override)
+            for override in compatible_greeters([desktop]):
+                self.assertEqual(policy.selected_greeter([desktop], override), override)
 
     def test_bios_rejects_uefi_bootloaders(self):
         for boot in ('Systemd-boot', 'Refind'):
@@ -73,13 +74,17 @@ class ConfigTests(unittest.TestCase):
         return NS(currentText=lambda: text, currentData=lambda: data)
 
     def generate(self, desktop, greeter, boot, multilib, size=100):
-        system = NS(de_combo=self.combo(desktop), greeter_combo=self.combo(greeter, greeter),
-                    kb_combo=self.combo('trq'), tz_combo=self.combo('Europe/Istanbul'),
+        desktops = [desktop] if isinstance(desktop, str) else list(desktop)
+        desktop_page = NS(selected_desktops=lambda: desktops,
+                          selected_greeter=lambda: policy.selected_greeter(desktops, greeter))
+        system = NS(kb_combo=self.combo('trq'), tz_combo=self.combo('Europe/Istanbul'),
                     selected_bootloader=lambda: boot, selected_kernels=lambda: ['linux', 'linux-lts'])
         extra = NS(get_selected_packages=lambda: [], is_multilib_enabled=lambda: multilib)
-        main = NS(pages=[None, system, NS(get_selected_regions=lambda: ['Turkey']),
-                         NS(disk_combo=self.combo('/dev/testdisk (100G)')), NS(users=[], root_pass=NS(text=lambda: '')),
-                         extra], cleanup_install_files=lambda: None)
+        main = NS(system_page=system, desktop_page=desktop_page,
+                  mirror_page=NS(get_selected_regions=lambda: ['Turkey']),
+                  disk_page=NS(disk_combo=self.combo('/dev/testdisk (100G)')),
+                  user_page=NS(users=[], root_pass=NS(text=lambda: '')),
+                  extra_page=extra, cleanup_install_files=lambda: None)
         page = NS(main_window=main, _build_package_list=installer.SummaryPage._build_package_list,
                   _build_custom_commands=installer.SummaryPage._build_custom_commands)
         result = NS(stdout=json.dumps({'blockdevices': [{'type': 'disk', 'mountpoints': [None]}]}))
@@ -98,7 +103,7 @@ class ConfigTests(unittest.TestCase):
 
     def test_generated_configuration_matrix(self):
         for desktop in policy.GREETERS:
-            for greeter in ('default', *policy.GREETER_SERVICES):
+            for greeter in ('default', *compatible_greeters([desktop])):
                 for boot in ('Grub', 'Systemd-boot', 'Refind'):
                     for multilib in (False, True):
                         with self.subTest(desktop=desktop, greeter=greeter, boot=boot, multilib=multilib):
@@ -106,6 +111,8 @@ class ConfigTests(unittest.TestCase):
                             effective = policy.selected_greeter(desktop, greeter)
                             self.assertEqual(config['profile_config']['greeter'], effective)
                             self.assertEqual(target['greeter'], effective)
+                            self.assertEqual(target['desktops'], [desktops_for([desktop])[0].slug])
+                            self.assertEqual(config['profile_config']['profile']['details'], [desktops_for([desktop])[0].profile])
                             self.assertNotIn(None, config['packages'])
                             self.assertEqual(config['additional_repositories'], ['multilib'] if multilib else [])
                             self.assertEqual(target['multilib'], str(multilib).lower())
