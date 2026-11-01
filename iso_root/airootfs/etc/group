@@ -1,0 +1,6 @@
+root:x:0:root
+zelix:x:1000:
+wheel:x:998:zelix
+video:x:985:zelix
+audio:x:986:zelix
+sddm:x:973:

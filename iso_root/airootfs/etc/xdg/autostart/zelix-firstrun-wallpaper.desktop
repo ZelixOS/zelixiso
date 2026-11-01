@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Zelix Aurora First Login Setup
+Exec=/usr/local/bin/zelix-first-login
+OnlyShowIn=KDE;
+X-KDE-autostart-phase=2
+NoDisplay=true

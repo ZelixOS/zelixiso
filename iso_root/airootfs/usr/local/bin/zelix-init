@@ -1,0 +1,8 @@
+#!/bin/bash
+# Şifreyi boşalt (garantiye al)
+passwd -d zelix 2>/dev/null || true
+# Ev dizini yetkilerini ver
+chown -R zelix:zelix /home/zelix 2>/dev/null || true
+usermod -aG video,audio,wheel,storage zelix 2>/dev/null || true
+
+plasma-apply-colorscheme BreezeDark 2>/dev/null || true

@@ -1,0 +1,16 @@
+[submodule "zelixins"]
+	path = zelixins
+	url = https://github.com/ZelixOS/zelixins.git
+	shallow = true
+[submodule "zelix-hello"]
+	path = zelix-hello
+	url = https://github.com/ZelixOS/zelix-hello.git
+	shallow = true
+[submodule "zelix-updater"]
+	path = zelix-updater
+	url = https://github.com/ZelixOS/zelix-updater.git
+	shallow = true
+[submodule "zelix-repo"]
+	path = zelix-repo
+	url = https://github.com/ZelixOS/zelix-repo.git
+	shallow = true

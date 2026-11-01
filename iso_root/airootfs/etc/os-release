@@ -1,0 +1,11 @@
+NAME="ZelixOS"
+PRETTY_NAME="ZelixOS Aurora"
+ID=zelixos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="0;34"
+HOME_URL="https://zelixos.com"
+DOCUMENTATION_URL="https://zelixos.com/docs/docs.html"
+SUPPORT_URL="https://zelixos.com"
+BUG_REPORT_URL="https://zelixos.com/br.html"
+LOGO=/usr/share/zelix/zelix-icon.png
