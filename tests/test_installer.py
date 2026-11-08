@@ -70,6 +70,18 @@ class PolicyTests(unittest.TestCase):
 
 
 class ConfigTests(unittest.TestCase):
+    def test_waybar_is_installed_for_hyprland(self):
+        system = NS(selected_bootloader=lambda: 'Grub')
+        packages = installer.SummaryPage._build_package_list(system, ['Hyprland'], 'sddm')
+        self.assertIn('waybar', packages)
+        self.assertIn('wofi', packages)
+        self.assertNotIn('waybar', installer.SummaryPage._build_package_list(system, ['KDE Plasma'], 'sddm'))
+
+    def test_updater_dependencies_are_installed_with_copied_application(self):
+        system = NS(selected_bootloader=lambda: 'Grub')
+        packages = installer.SummaryPage._build_package_list(system, ['KDE Plasma'], 'sddm')
+        self.assertTrue({'pacman-contrib', 'fakeroot', 'polkit'}.issubset(packages))
+
     def combo(self, text, data=None):
         return NS(currentText=lambda: text, currentData=lambda: data)
 
@@ -128,6 +140,47 @@ class ConfigTests(unittest.TestCase):
 
 
 class ResultTests(unittest.TestCase):
+    def postinstall_page(self):
+        page = MagicMock()
+        page.main_window.install_target = dict(
+            disk='/dev/testdisk', root='/dev/testdisk2', boot='/dev/testdisk1',
+            home='-', desktops=['kde-plasma'], greeter='sddm', bootloader='Grub',
+            multilib='false', packages=[])
+        return page
+
+    def test_partition_probe_requests_tree_before_starting_payload(self):
+        page = self.postinstall_page()
+
+        def probe(args, **kwargs):
+            parts = [{'path': '/dev/testdisk1', 'type': 'part'},
+                     {'path': '/dev/testdisk2', 'type': 'part'}]
+            disk = {'path': '/dev/testdisk', 'type': 'disk'}
+            # lsblk only emits children with NAME or an explicit --tree.
+            if '--tree' in args:
+                disk['children'] = parts
+                devices = [disk]
+            else:
+                devices = [disk, *parts]
+            return NS(stdout=json.dumps({'blockdevices': devices}))
+
+        with patch.object(installer.subprocess, 'run', side_effect=probe):
+            installer.InstallProgressPage.run_post_install(page)
+        page.install_failed.assert_not_called()
+        page.process.start.assert_called_once()
+        self.assertIn('/dev/testdisk2', str(page.process.start.call_args))
+        page.finish_btn.show.assert_not_called()
+
+    def test_missing_partition_still_blocks_payload(self):
+        page = self.postinstall_page()
+        result = NS(stdout=json.dumps({'blockdevices': [
+            {'path': '/dev/testdisk', 'type': 'disk', 'children': [
+                {'path': '/dev/testdisk1', 'type': 'part'}]}]}))
+        with patch.object(installer.subprocess, 'run', return_value=result):
+            installer.InstallProgressPage.run_post_install(page)
+        page.process.start.assert_not_called()
+        page.install_failed.assert_called_once()
+        self.assertIn('missing: /dev/testdisk2', page.install_failed.call_args.args[0])
+
     def test_archinstall_failure_never_runs_postinstall(self):
         page = MagicMock()
         installer.InstallProgressPage.process_finished(page, 1, installer.QProcess.ExitStatus.NormalExit)

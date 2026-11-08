@@ -196,6 +196,8 @@ class DesktopSetupTests(unittest.TestCase):
         self.assertEqual(set(wallpapers), {d.slug for d in DESKTOPS})
         self.assertTrue((self.home/'.config/hypr/zelix.lua').is_file())
         self.assertIn('hl.config', (self.home/'.config/hypr/zelix.lua').read_text())
+        self.assertIn('hl.exec_cmd("waybar")', (self.home/'.config/hypr/zelix.lua').read_text())
+        self.assertIn('hl.bind("SUPER + SPACE", hl.dsp.exec_cmd("wofi --show drun"))', (self.home/'.config/hypr/zelix.lua').read_text())
         self.assertIn('# sway bindings', (self.home/'.config/sway/config').read_text())
         self.assertIn('client.focused', (self.home/'.config/i3/zelix.conf').read_text())
         self.assertIn('focused_border_color', (self.home/'.config/bspwm/bspwmrc').read_text())
@@ -232,6 +234,9 @@ class DesktopSetupTests(unittest.TestCase):
         desktop_setup.install_defaults(self.target,self.assets,['Hyprland'],'ly')
         self.assertIn('# existing bindings',config.read_text())
         self.assertTrue((config.parent/'zelix.conf').is_file())
+        fragment = (config.parent/'zelix.conf').read_text()
+        self.assertIn('exec-once = waybar', fragment)
+        self.assertIn('bind = SUPER, SPACE, exec, wofi --show drun', fragment)
         self.assertFalse((config.parent/'hyprland.lua').exists())
 
     def test_installed_sddm_does_not_inherit_live_autologin_or_wayland_backend(self):
