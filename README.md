@@ -1,41 +1,41 @@
 # ZelixOS
 
-ZelixOS, Arch Linux tabanlı bir Linux dağıtımıdır. Bu çalışma alanı canlı ISO profilini, uygulama kaynaklarını ve paket üretim araçlarını içerir.
+ZelixOS is an Arch Linux based distribution. This workspace contains the live ISO profile, application sources, and package build tools.
 
-## Dizinler
+## Project structure
 
-| Dizin | İçerik |
+| Directory | Contents |
 | --- | --- |
-| `iso_root/` | Archiso profili ve canlı sistem dosyaları |
-| `zelixins/` | Grafik kurucu |
-| `zelix-hello/` | Karşılama ve sistem yönetimi uygulaması |
-| `zelix-updater/` | Sistem güncelleme uygulaması |
-| `zelixpen/` | Ekran üzerinde çizim aracı |
-| `zelix-repo/` | Paket tarifleri ve paketleme kaynakları |
-| `scripts/` | Kaynak eşitleme, paketleme ve ISO üretimi |
-| `tests/`, `docs/` | Otomatik kontroller ve geliştirme belgeleri |
+| `iso_root/` | Archiso profile and live system files |
+| `zelixins/` | Graphical installer |
+| `zelix-hello/` | Welcome and system management application |
+| `zelix-updater/` | System update application |
+| `zelixpen/` | On-screen drawing tool |
+| `zelix-repo/` | Package recipes and packaging sources |
+| `scripts/` | Source synchronization, packaging, and ISO build tools |
+| `tests/`, `docs/` | Automated checks and development documentation |
 
-## Derleme
+## Building
 
-Arch Linux veya ZelixOS üzerinde `archiso`, `base-devel` ve ilgili PKGBUILD dosyalarındaki bağımlılıklar gereklidir. Çalışma alanının yolu boşluk içermemelidir.
+Use Arch Linux or ZelixOS with `archiso`, `base-devel`, and the dependencies listed in the package recipes. The workspace path must not contain spaces.
 
-Paketleri normal kullanıcıyla oluşturun:
+Build packages as a regular user:
 
 ```bash
 scripts/build-packages.sh
 ```
 
-ISO oluşturun:
+Build an ISO:
 
 ```bash
 sudo scripts/build.sh
 ```
 
-Paketler `ZelixRepo/`, ISO dosyaları `out/` dizinine yazılır. Derleme sırasında `work/` yeniden oluşturulur.
+Packages are written to `ZelixRepo/` and ISO images to `out/`. The ISO build recreates `work/`.
 
-## Geliştirme
+## Development
 
-Uygulama değişikliklerini ana kaynak dizinlerinde yapın. Paketleme kopyalarını eşitlemek ve kontrolleri çalıştırmak için:
+Edit applications in their main source directories. Synchronize packaging copies and run checks with:
 
 ```bash
 python scripts/sync-sources.py
@@ -43,10 +43,10 @@ python scripts/sync-sources.py --check
 QT_QPA_PLATFORM=offscreen python -m unittest discover -s tests
 ```
 
-Disk kurulumu ve önyükleme kontrollerini sanal makinede yapın. Ayrıntılar [geliştirme rehberinde](docs/DEVELOPMENT.md) bulunur.
+Test disk installation and boot behavior in a virtual machine. See the [development guide](docs/DEVELOPMENT.md) for details.
 
-## Bağlantılar
+## Links
 
-- [Web sitesi](https://zelixos.com/)
-- [ISO yayınları](https://github.com/ZelixOS/zelixiso/releases)
-- [Paket deposu](https://github.com/ZelixOS/zelix-repo/releases/tag/stable)
+- [Website](https://zelixos.com/)
+- [ISO releases](https://github.com/ZelixOS/zelixiso/releases)
+- [Package repository](https://github.com/ZelixOS/zelix-repo/releases/tag/stable)
