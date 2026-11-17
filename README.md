@@ -1,52 +1,174 @@
 # ZelixOS
 
-ZelixOS is an Arch Linux based distribution. This workspace contains the live ISO profile, application sources, and package build tools.
+ZelixOS is an Arch Linux based distribution with a graphical installer, a customized desktop, and its own tools for software management and system maintenance. Aurora brings these components together with a dark appearance and a choice of desktop environments and window managers.
 
-## Project structure
+This is the main ZelixOS project repository. It brings together the live system profile, application source repositories, build tools, and development documentation. The repository name, `zelixiso`, reflects its role in producing the installation image.
 
-| Directory | Contents |
+[Download ZelixOS](https://zelixos.com/download/) · [Documentation](https://zelixos.com/docs/) · [Release downloads](https://github.com/ZelixOS/zelixiso/releases) · [Report an issue](https://github.com/ZelixOS/zelixiso/issues)
+
+![ZelixOS Aurora KDE Plasma desktop](docs/images/zelixos-desktop.png)
+
+## What ZelixOS provides
+
+- An Arch Linux base with pacman and rolling package updates.
+- A live desktop for trying the system and starting installation.
+- Zelixins, a graphical installer built around Archinstall.
+- A choice of KDE Plasma, GNOME, Xfce, Hyprland, Sway, i3, and bspwm during installation.
+- Zelix Hello for getting started, managing applications, and accessing system tools.
+- Zelix Updater for checking and installing updates from configured pacman repositories.
+- Zelix CLI for common update and maintenance tasks in the terminal.
+- Aurora appearance settings, wallpapers, and desktop-specific defaults.
+- English and Turkish interfaces in the installer and welcome application.
+
+## Getting started
+
+1. Download an ISO from the [download page](https://zelixos.com/download/) or [GitHub Releases](https://github.com/ZelixOS/zelixiso/releases).
+2. Verify it against the checksum supplied with that release, when available.
+3. Write the image to a USB drive and boot it using your computer's boot menu.
+4. Connect to the internet in the live session and open **Install ZelixOS**.
+5. Choose your system settings, target disk, user accounts, desktop environments, and additional software.
+6. Review the installation summary, install, and restart into the installed system.
+
+Installation downloads packages from Arch mirrors, so an internet connection is required. Use the [installation documentation](https://zelixos.com/docs/) for hardware requirements, USB preparation, and troubleshooting.
+
+**The installer erases the selected disk and does not provide manual partitioning. Back up your files before installing.**
+
+## The installer
+
+Zelixins guides you through system configuration with a graphical interface. It supports kernel and bootloader selection, multiple desktop sessions, compatible login managers, and optional software. Installation output is displayed in the interface, including failures during installation and post-install configuration.
+
+![Zelixins graphical installer in the live desktop](docs/images/zelixins.png)
+
+The installer uses Archinstall for the base installation, then applies ZelixOS configuration and installs the distribution's application packages. Disk and boot compatibility checks help validate the selected configuration before installation starts.
+
+## Desktop choices
+
+Choose a full desktop environment or a window manager during installation. When several environments are selected, each is available as a separate login session. Login manager choices are restricted to combinations supported by the selected environments.
+
+| Environment | Session | Default direction |
+| --- | --- | --- |
+| KDE Plasma | Wayland | A familiar panel layout with Aurora appearance settings |
+| GNOME | Wayland | An Activities and workspace based workflow |
+| Xfce | X11 | A traditional desktop with a panel and application menu |
+| Hyprland | Wayland | Dynamic tiling with Waybar and Wofi |
+| Sway | Wayland | Tiling with an i3-style keyboard workflow |
+| i3 | X11 | Keyboard-driven tiling and workspaces |
+| bspwm | X11 | Tree-based tiling with sxhkd shortcuts |
+
+Desktop-specific defaults include wallpapers, appearance settings, and selected session tools. See the [desktop configuration guide](docs/DESKTOPS.md) for supported login manager combinations and implementation details.
+
+## Zelix applications
+
+| Application | Purpose | Source |
+| --- | --- | --- |
+| Zelix Hello | Welcome page, application management, driver suggestions, and system tools | [zelix-hello](https://github.com/ZelixOS/zelix-hello) |
+| Zelixins | Graphical installation and post-install configuration | [zelixins](https://github.com/ZelixOS/zelixins) |
+| Zelix Updater | Update checks and system upgrades through pacman | [zelix-updater](https://github.com/ZelixOS/zelix-updater) |
+| Zelix CLI | Terminal commands for updates, mirrors, maintenance, and system information | [zelix-cli](https://github.com/ZelixOS/zelix-repo/tree/main/zelix-cli) |
+| ZelixPen | On-screen drawing and annotation, available from the package repository | [zelixpen](https://github.com/ZelixOS/zelix-repo/tree/main/zelixpen) |
+
+![Zelix Hello, Zelix Updater, and the Zelix command-line tool](docs/images/zelix-tools.png)
+
+Zelix Hello provides access to Arch packages, Flatpak, and AUR installation paths. These sources use their respective tools. Zelix Updater handles configured pacman repositories; AUR and Flatpak updates are managed separately or through the CLI.
+
+## Appearance
+
+Aurora provides a dark visual style, wallpapers, and a themed login experience. KDE Plasma uses the Zelix Aurora look and feel with a white accent. Other desktop choices receive their own initial appearance settings.
+
+![ZelixOS themed SDDM login screen](docs/images/zelixos-login.png)
+
+Screenshots show existing Aurora builds. Interface details and defaults may differ between releases.
+
+## Packages and updates
+
+ZelixOS uses pacman for system packages. On an installed system, update all configured repositories with:
+
+```bash
+sudo pacman -Syu
+```
+
+The [Zelix package repository](https://github.com/ZelixOS/zelix-repo) maintains distribution application recipes and repository indexes. Package archives are distributed through its [stable release](https://github.com/ZelixOS/zelix-repo/releases/tag/stable).
+
+With `zelixrepo` configured, install companion applications with:
+
+```bash
+sudo pacman -Syu zelix-hello zelix-updater zelix-cli zelixpen
+```
+
+The CLI provides a summary of its commands with `zelix help`. Package and application changes do not require downloading a new ISO for every update; installation images and installed system packages are distributed separately.
+
+## Repository structure
+
+| Path | Contents |
 | --- | --- |
-| `iso_root/` | Archiso profile and live system files |
-| `zelixins/` | Graphical installer |
-| `zelix-hello/` | Welcome and system management application |
-| `zelix-updater/` | System update application |
-| `zelixpen/` | On-screen drawing tool |
-| `zelix-repo/` | Package recipes and packaging sources |
-| `scripts/` | Source synchronization, packaging, and ISO build tools |
-| `tests/`, `docs/` | Automated checks and development documentation |
+| `iso_root/` | Archiso profile, live system files, package list, and boot configuration |
+| `zelixins/` | Installer source submodule |
+| `zelix-hello/` | Welcome application source submodule |
+| `zelix-updater/` | Updater source submodule |
+| `zelix-repo/` | Package recipes and packaging source submodule |
+| `scripts/` | Source synchronization, package builds, ISO builds, and verification |
+| `tests/` | Automated build, installer, desktop, and updater checks |
+| `docs/` | Development guides, release notes, and README screenshots |
 
-## Building
+## Building ZelixOS
 
-Use Arch Linux or ZelixOS with `archiso`, `base-devel`, and the dependencies listed in the package recipes. The workspace path must not contain spaces.
+Use an Arch Linux or ZelixOS host with `archiso`, `base-devel`, Python, and the dependencies listed in the relevant PKGBUILD files. Use a workspace path without spaces and allow enough disk space for downloaded packages, the build filesystem, and ISO output.
 
-Build packages as a regular user:
+Clone the repository and its pinned source submodules:
+
+```bash
+git clone --recurse-submodules https://github.com/ZelixOS/zelixiso.git
+cd zelixiso
+```
+
+For an existing clone, initialize the pinned submodules with:
+
+```bash
+git submodule update --init --recursive
+```
+
+Build the application packages and local repository index as a regular user:
 
 ```bash
 scripts/build-packages.sh
 ```
 
-Build an ISO:
+Build the installation image from your regular user account using sudo:
 
 ```bash
 sudo scripts/build.sh
 ```
 
-Packages are written to `ZelixRepo/` and ISO images to `out/`. The ISO build recreates `work/`.
+Packages are written to `ZelixRepo/`, and ISO images to `out/`. The ISO build recreates `work/` and stops if active mounts are found underneath it. Existing ISO output files are retained. Building locally does not publish packages or images to GitHub.
 
-## Development
+## Development and testing
 
-Edit applications in their main source directories. Synchronize packaging copies and run checks with:
+Edit application code in its main source directory and package recipes in `zelix-repo/`. Synchronize derived packaging copies before building:
 
 ```bash
 python scripts/sync-sources.py
 python scripts/sync-sources.py --check
+```
+
+Run the automated checks from the repository root:
+
+```bash
 QT_QPA_PLATFORM=offscreen python -m unittest discover -s tests
 ```
 
-Test disk installation and boot behavior in a virtual machine. See the [development guide](docs/DEVELOPMENT.md) for details.
+The automated tests do not replace a full installation test. Validate BIOS and UEFI installation, the selected login manager, desktop startup, networking, and reboot behavior in a virtual machine before testing physical hardware.
 
-## Links
+Read the [development guide](docs/DEVELOPMENT.md), [desktop guide](docs/DESKTOPS.md), and [release notes](docs/RELEASE-NOTES-EN.md) for implementation details.
+
+## Contributing and support
+
+Use this repository for distribution-wide issues involving the live image, integration, appearance, or installation media. For a problem limited to one application, use its source repository linked above.
+
+When reporting a problem, include the ISO or package version, hardware or virtual machine configuration, BIOS/UEFI mode, selected desktop, steps to reproduce, and relevant error output. Remove passwords and other private information from logs before sharing them.
+
+Contributions can include bug fixes, installation testing, translations, documentation, and desktop configuration improvements. Explain the behavior your change addresses and how you verified it.
 
 - [Website](https://zelixos.com/)
-- [ISO releases](https://github.com/ZelixOS/zelixiso/releases)
-- [Package repository](https://github.com/ZelixOS/zelix-repo/releases/tag/stable)
+- [Documentation](https://zelixos.com/docs/)
+- [Release announcements](https://zelixos.com/blog/)
+- [ZelixOS repositories](https://github.com/ZelixOS)
