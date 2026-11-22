@@ -8,6 +8,8 @@ This is the main ZelixOS project repository. It brings together the live system 
 
 ![ZelixOS Aurora KDE Plasma desktop](docs/images/zelixos-desktop.png)
 
+Project applications and the installer provide English, Turkish, and Spanish interfaces. Language availability can differ in external tools and package output, which follow their own locale settings.
+
 ## What ZelixOS provides
 
 - An Arch Linux base with pacman and rolling package updates.
@@ -18,7 +20,7 @@ This is the main ZelixOS project repository. It brings together the live system 
 - Zelix Updater for checking and installing updates from configured pacman repositories.
 - Zelix CLI for common update and maintenance tasks in the terminal.
 - Aurora appearance settings, wallpapers, and desktop-specific defaults.
-- English and Turkish interfaces in the installer and welcome application.
+- English, Turkish, and Spanish interfaces in the ZelixOS applications and installer.
 
 ## Getting started
 
