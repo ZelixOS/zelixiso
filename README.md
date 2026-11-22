@@ -39,7 +39,7 @@ Installation downloads packages from Arch mirrors, so an internet connection is 
 
 Zelixins guides you through system configuration with a graphical interface. It supports kernel and bootloader selection, multiple desktop sessions, compatible login managers, and optional software. Installation output is displayed in the interface, including failures during installation and post-install configuration.
 
-![Zelixins graphical installer in the live desktop](docs/images/zelixins.png)
+![Latest Zelixins welcome screen in the ZelixOS live desktop](docs/images/zelixins.png)
 
 The installer uses Archinstall for the base installation, then applies ZelixOS configuration and installs the distribution's application packages. Disk and boot compatibility checks help validate the selected configuration before installation starts.
 
@@ -69,7 +69,13 @@ Desktop-specific defaults include wallpapers, appearance settings, and selected 
 | Zelix CLI | Terminal commands for updates, mirrors, maintenance, and system information | [zelix-cli](https://github.com/ZelixOS/zelix-repo/tree/main/zelix-cli) |
 | ZelixPen | On-screen drawing and annotation, available from the package repository | [zelixpen](https://github.com/ZelixOS/zelix-repo/tree/main/zelixpen) |
 
-![Zelix Hello, Zelix Updater, and the Zelix command-line tool](docs/images/zelix-tools.png)
+| Zelix Hello | Zelix Updater |
+| --- | --- |
+| ![Zelix Hello welcome screen](docs/images/zelix-hello.png) | ![Zelix Updater screen](docs/images/zelix-updater.png) |
+
+Zelix CLI help is available directly in the terminal:
+
+![Zelix CLI help screen in Konsole](docs/images/zelix-cli.png)
 
 Zelix Hello provides access to Arch packages, Flatpak, and AUR installation paths. These sources use their respective tools. Zelix Updater handles configured pacman repositories; AUR and Flatpak updates are managed separately or through the CLI.
 
