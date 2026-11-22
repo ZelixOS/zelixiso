@@ -22,18 +22,32 @@ Project applications and the installer provide English, Turkish, and Spanish int
 - Aurora appearance settings, wallpapers, and desktop-specific defaults.
 - English, Turkish, and Spanish interfaces in the ZelixOS applications and installer.
 
-## Getting started
+## Prepare to install
 
-1. Download an ISO from the [download page](https://zelixos.com/download/) or [GitHub Releases](https://github.com/ZelixOS/zelixiso/releases).
-2. Verify it against the checksum supplied with that release, when available.
-3. Write the image to a USB drive and boot it using your computer's boot menu.
-4. Connect to the internet in the live session and open **Install ZelixOS**.
-5. Choose your system settings, target disk, user accounts, desktop environments, and additional software.
-6. Review the installation summary, install, and restart into the installed system.
+1. Download an ISO from the [ZelixOS download page](https://zelixos.com/download/) or [GitHub Releases](https://github.com/ZelixOS/zelixiso/releases). Use the checksum published with the same release when one is provided.
+2. Write the ISO to a USB drive with an image-writing tool. Writing the image erases the selected USB drive; verify its device name before confirming.
+3. Boot the USB from the machine's firmware boot menu. Note whether it starts in UEFI or legacy BIOS mode because the bootloader choice must match.
+4. Connect to the internet in the live session. The installer downloads packages from Arch mirrors and ZelixRepo.
+5. Open **Install ZelixOS** from the desktop. Follow the ten screens below and review the proposed disk layout before starting.
 
-Installation downloads packages from Arch mirrors, so an internet connection is required. Use the [installation documentation](https://zelixos.com/docs/) for hardware requirements, USB preparation, and troubleshooting.
+Zelixins requires an internet connection and a target disk of at least 25 GiB. See the [website installation guide](https://zelixos.com/docs/) for media preparation and further help.
 
-**The installer erases the selected disk and does not provide manual partitioning. Back up your files before installing.**
+> **Disk warning:** Zelixins automatically partitions and formats the whole selected disk. It does not currently provide manual partition editing or disk encryption. Back up important data and disconnect drives that are not installation targets before continuing.
+
+## Ten screens in the installer
+
+The full step-by-step guide, including filesystem options and troubleshooting, is in the [Zelixins README](https://github.com/ZelixOS/zelixins#installation-walkthrough).
+
+1. **Welcome:** choose the installer interface language: English, Turkish, or Spanish.
+2. **System:** select the installed-system locale, keyboard layout, time zone, one or more kernels, and a firmware-compatible bootloader.
+3. **Type:** choose Minimal, Standard, Full Experience, or Custom. The profile preselects packages and optional appearance components.
+4. **Desktop:** select KDE Plasma, GNOME, Xfce, Hyprland, Sway, i3, or bspwm, then choose a login manager compatible with all selected sessions.
+5. **Mirrors:** select nearby package mirror regions; the worldwide mirror is selected by default.
+6. **Disk:** choose the target disk and filesystem, optionally create a separate `/home`, and inspect the generated partition preview. This selection is destructive.
+7. **Users:** set the optional root password and add at least one regular user. Choose whether the user has `sudo` administrator access.
+8. **Software:** review the profile's applications and select optional Arch/ZelixRepo, Flatpak, or AUR packages. Appearance components are selected with the installation type on screen 3.
+9. **Summary:** verify the disk, locale, sessions, login manager, mirrors, kernels, bootloader, accounts, and packages. Go back to correct any choice.
+10. **Install:** confirm the disk operation, keep the system powered on, and follow the live progress log. After success, restart, remove the USB, and sign in with the created user.
 
 ## The installer
 
@@ -66,8 +80,8 @@ Desktop-specific defaults include wallpapers, appearance settings, and selected 
 | Zelix Hello | Welcome page, application management, driver suggestions, and system tools | [zelix-hello](https://github.com/ZelixOS/zelix-hello) |
 | Zelixins | Graphical installation and post-install configuration | [zelixins](https://github.com/ZelixOS/zelixins) |
 | Zelix Updater | Update checks and system upgrades through pacman | [zelix-updater](https://github.com/ZelixOS/zelix-updater) |
-| Zelix CLI | Terminal commands for updates, mirrors, maintenance, and system information | [zelix-cli](https://github.com/ZelixOS/zelix-repo/tree/main/zelix-cli) |
-| ZelixPen | On-screen drawing and annotation, available from the package repository | [zelixpen](https://github.com/ZelixOS/zelix-repo/tree/main/zelixpen) |
+| Zelix CLI | Terminal commands for updates, mirrors, maintenance, and system information | [zelix-cli](https://github.com/ZelixOS/zelix-cli) |
+| ZelixPen | On-screen drawing and annotation, available from the package repository | [zelixpen](https://github.com/ZelixOS/zelixpen) |
 
 | Zelix Hello | Zelix Updater |
 | --- | --- |
