@@ -6,7 +6,7 @@ This is the main ZelixOS project repository. It brings together the live system 
 
 [Download ZelixOS](https://zelixos.com/download/) · [Documentation](https://zelixos.com/docs/) · [Release downloads](https://github.com/ZelixOS/zelixiso/releases) · [Report an issue](https://github.com/ZelixOS/zelixiso/issues)
 
-![ZelixOS Aurora KDE Plasma desktop](docs/images/zelixos-desktop.png)
+![ZelixOS Aurora desktop with the ZelixOS logo wallpaper](docs/images/zelixos-desktop.png)
 
 Project applications and the installer provide English, Turkish, and Spanish interfaces. Language availability can differ in external tools and package output, which follow their own locale settings.
 
