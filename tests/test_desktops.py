@@ -111,9 +111,11 @@ class DesktopUITests(unittest.TestCase):
         for desktop, checkbox in self.page.checkboxes.items():
             checkbox.setChecked(desktop in names)
 
-    def test_nine_steps_and_named_navigation(self):
-        self.assertEqual(len(self.window.pages), 9)
+    def test_ten_steps_and_named_navigation(self):
+        self.assertEqual(len(self.window.pages), 10)
         self.window.stacked_widget.setCurrentWidget(self.window.system_page)
+        self.window.next_page()
+        self.assertIs(self.window.stacked_widget.currentWidget(), self.window.profile_page)
         self.window.next_page()
         self.assertIs(self.window.stacked_widget.currentWidget(), self.page)
         self.assertEqual(self.page.selected_desktops(), ['KDE Plasma'])

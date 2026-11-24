@@ -53,7 +53,9 @@ class PolicyTests(unittest.TestCase):
                     self.assertEqual('esp' in parts[0]['flags'], uefi)
                     self.assertEqual(len({p['obj_id'] for p in parts}), len(parts))
         self.assertEqual(len(policy.build_partitions(25 * 1024**3, True, 4)), 2)
-        self.assertEqual(len(policy.build_partitions(100 * 1024**3, True, 1)), 3)
+        self.assertEqual(len(policy.build_partitions(100 * 1024**3, True, 1)), 2)
+        self.assertEqual(len(policy.build_partitions(
+            100 * 1024**3, True, 1, separate_home=True, root_gib=50)), 3)
 
     def test_partition_device_names(self):
         for disk, expected in (('/dev/sda', '/dev/sda2'), ('/dev/nvme0n1', '/dev/nvme0n1p2'),
@@ -70,17 +72,19 @@ class PolicyTests(unittest.TestCase):
 
 
 class ConfigTests(unittest.TestCase):
-    def test_waybar_is_installed_for_hyprland(self):
+    def test_desktop_packages_are_owned_by_archinstall_profiles(self):
         system = NS(selected_bootloader=lambda: 'Grub')
         packages = installer.SummaryPage._build_package_list(system, ['Hyprland'], 'sddm')
-        self.assertIn('waybar', packages)
-        self.assertIn('wofi', packages)
-        self.assertNotIn('waybar', installer.SummaryPage._build_package_list(system, ['KDE Plasma'], 'sddm'))
+        self.assertNotIn('waybar', packages)
+        self.assertNotIn('wofi', packages)
+        self.assertEqual(desktops_for(['Hyprland'])[0].profile, 'Hyprland')
 
-    def test_updater_dependencies_are_installed_with_copied_application(self):
+    def test_selected_appearance_components_add_their_dependencies(self):
         system = NS(selected_bootloader=lambda: 'Grub')
-        packages = installer.SummaryPage._build_package_list(system, ['KDE Plasma'], 'sddm')
-        self.assertTrue({'pacman-contrib', 'fakeroot', 'polkit'}.issubset(packages))
+        packages = installer.SummaryPage._build_package_list(
+            system, ['KDE Plasma'], 'sddm', [], ('sddm-theme', 'plymouth-theme'))
+        self.assertTrue({'qt6-translations', 'qt6-svg', 'qt6-imageformats',
+                         'plymouth', 'polkit'}.issubset(packages))
 
     def combo(self, text, data=None):
         return NS(currentText=lambda: text, currentData=lambda: data)
@@ -90,11 +94,21 @@ class ConfigTests(unittest.TestCase):
         desktop_page = NS(selected_desktops=lambda: desktops,
                           selected_greeter=lambda: policy.selected_greeter(desktops, greeter))
         system = NS(kb_combo=self.combo('trq'), tz_combo=self.combo('Europe/Istanbul'),
-                    selected_bootloader=lambda: boot, selected_kernels=lambda: ['linux', 'linux-lts'])
+                    selected_bootloader=lambda: boot, selected_kernels=lambda: ['linux', 'linux-lts'],
+                    selected_system_locale=lambda: 'tr_TR.UTF-8')
         extra = NS(get_selected_packages=lambda: [], is_multilib_enabled=lambda: multilib)
+        storage = {'root_fs': 'ext4', 'separate_home': True, 'home_fs': 'ext4',
+                   'root_gib': 50, 'compression': True, 'encrypted': False}
+        disk = NS(disk_combo=self.combo('/dev/testdisk (100G)'),
+                  storage_settings=lambda: storage,
+                  planned_partitions=lambda total: policy.build_partitions(
+                      total, boot != 'BIOS', 2, root_fs='ext4', separate_home=True,
+                      home_fs='ext4', root_gib=50))
+        profile = NS(get_selected_components=lambda: [], installation_profile=lambda: 'standard')
         main = NS(system_page=system, desktop_page=desktop_page,
-                  mirror_page=NS(get_selected_regions=lambda: ['Turkey']),
-                  disk_page=NS(disk_combo=self.combo('/dev/testdisk (100G)')),
+                  mirror_page=NS(get_selected_mirrors=lambda: {'Turkey': ['https://mirror.example/$repo/os/$arch']},
+                                 WORLDWIDE_MIRRORS=['https://mirror.example/$repo/os/$arch']),
+                  disk_page=disk, profile_page=profile,
                   user_page=NS(users=[], root_pass=NS(text=lambda: '')),
                   extra_page=extra, cleanup_install_files=lambda: None)
         page = NS(main_window=main, _build_package_list=installer.SummaryPage._build_package_list,
@@ -131,7 +145,7 @@ class ConfigTests(unittest.TestCase):
                             self.assertEqual(config['custom_commands'], [])
                             self.assertEqual(target['home'], '/dev/testdisk3')
                             self.assertEqual('grub' in config['packages'], boot == 'Grub')
-                            self.assertEqual('sddm-kcm' in config['packages'], effective == 'sddm')
+                            self.assertEqual('sddm' in config['packages'], effective == 'sddm')
 
     def test_no_invented_disks_or_sizes_after_probe_failure(self):
         with patch.object(installer.subprocess, 'run', side_effect=OSError('probe failed')):
@@ -145,7 +159,9 @@ class ResultTests(unittest.TestCase):
         page.main_window.install_target = dict(
             disk='/dev/testdisk', root='/dev/testdisk2', boot='/dev/testdisk1',
             home='-', desktops=['kde-plasma'], greeter='sddm', bootloader='Grub',
-            multilib='false', packages=[])
+            multilib='false', packages=[], components=[])
+        page.main_window.install_config_path = '/tmp/zelix-test-config.json'
+        page.main_window.install_creds_path = '/tmp/zelix-test-creds.json'
         return page
 
     def test_partition_probe_requests_tree_before_starting_payload(self):
@@ -207,9 +223,11 @@ class ResultTests(unittest.TestCase):
 
     def test_success_cleans_credentials(self):
         page = MagicMock()
+        page.completion_received = True
         installer.InstallProgressPage.post_install_finished(page, 0, installer.QProcess.ExitStatus.NormalExit)
         page.finish_btn.show.assert_called_once()
         page.main_window.cleanup_install_files.assert_called_once()
+        page.main_window.disk_page.clear_secrets.assert_called_once()
 
 
 class FirstLoginTests(unittest.TestCase):

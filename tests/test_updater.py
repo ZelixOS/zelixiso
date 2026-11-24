@@ -41,12 +41,12 @@ class UpdaterTests(unittest.TestCase):
 
     def test_no_updates_is_not_an_error(self):
         self.run_check('', '', 2)
-        self.assertIn('güncel', self.window.status_label.text())
+        self.assertEqual(self.window.t('no_updates'), self.window.status_label.text())
         self.assertFalse(self.window.update_button.isEnabled())
 
     def test_check_failure_does_not_enable_update(self):
         self.run_check('', 'database error', 1)
-        self.assertIn('kontrol edilemedi', self.window.status_label.text())
+        self.assertEqual(self.window.t('check_failed'), self.window.status_label.text())
         self.assertIn('database error', self.window.log_view.toPlainText())
         self.assertFalse(self.window.update_button.isEnabled())
 
